@@ -17,6 +17,20 @@ with (import ./../lib.nix);
     };
   };
 
+  hydra2 = { config, pkgs, resources, ... }: {
+
+    imports = [
+      ./../modules/amazon-base.nix
+    ];
+
+    deployment.ec2 = {
+      # 16G memory
+      instanceType = mkForce "c3.2xlarge";
+      ebsInitialRootDiskSize = mkForce 200;
+      associatePublicIpAddress = true;
+    };
+  };
+
   cardano-deployer = { config, pkgs, resources, ... }: {
     imports = [
       ./../modules/amazon-base.nix

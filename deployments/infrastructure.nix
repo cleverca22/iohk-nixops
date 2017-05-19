@@ -17,6 +17,22 @@ with (import ./../lib.nix);
     networking.firewall.enable = mkForce true;
   };
 
+  hydra2 = { config, pkgs, ... }: {
+    # TODO: Slack integration
+    # On first setup:
+
+    # Locally: $ ssh-keygen -C "hydra@hydra.example.org" -N "" -f static/id_buildfarm
+    # On Hydra: $ /run/current-system/sw/bin/hydra-create-user alice --full-name 'Alice Q. User' --email-address 'alice@example.org' --password foobar --role admin
+
+    imports = [
+      ./../modules/hydra-slave.nix
+      ./../modules/hydra-master.nix
+      ./../modules/common.nix
+    ];
+
+    networking.firewall.enable = mkForce true;
+  };
+
   cardano-deployer = { config, pkgs, ... }: {
     imports = [
       ./../modules/common.nix

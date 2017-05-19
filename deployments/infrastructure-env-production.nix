@@ -17,6 +17,20 @@ with (import ./../lib.nix);
     };
   };
 
+  hydra2 = { config, pkgs, resources, ... }: {
+
+    imports = [
+      ./../modules/papertrail.nix
+      ./../modules/datadog.nix
+    ];
+
+    services.dd-agent.tags = ["env:production"];
+
+    deployment.ec2 = {
+      elasticIPv4 = resources.elasticIPs.hydra2-ip;
+    };
+  };
+
   cardano-deployer = { config, pkgs, resources, ... }: {
     imports = [
       ./../modules/common.nix
@@ -35,6 +49,7 @@ with (import ./../lib.nix);
   resources = {
     elasticIPs = {
       hydra-ip = { inherit region accessKeyId; };
+      hydra2-ip = { inherit region accessKeyId; };
       cardanod-ip = { inherit region accessKeyId; };
     };
   };
