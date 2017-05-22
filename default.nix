@@ -72,7 +72,7 @@ in compiler.override {
     });
     cardano-sl-static =
       buildSpeedupFlagsMarlowScaling
-      (buildSubset ("cardano-node")
+      (# buildSubset ("cardano-node") -- unfortunately, we need customizing the .cabal file for this to work..
        (dontCheck (linkWithGold (justStaticExecutables self.cardano-sl))));
     cardano-report-server-static = justStaticExecutables self.cardano-report-server;
     cardano-sl-explorer-static = justStaticExecutables self.cardano-sl-explorer;
