@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, options, ... }:
 
 with (import ./../lib.nix);
 
@@ -14,8 +14,16 @@ let
     if (smartGenIP != "")
     then "--peer ${smartGenIP}:24962/${genDhtKey 100 }}"
     else "";
-  publicIP = config.networking.publicIPv4 or null;
-  privateIP = config.networking.privateIPv4 or null;
+  tryOrNull = v:
+    let
+      result = builtins.tryEval (v);
+    in
+      if result.success then
+        result.value
+      else
+        null;
+  publicIP = tryOrNull (config.networking.publicIPv4 or null);
+  privateIP = tryOrNull (config.networking.privateIPv4 or null);
 
   # Given a list of dht/ip mappings, generate peers line
   #
