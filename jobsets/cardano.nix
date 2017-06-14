@@ -16,4 +16,5 @@ in rec {
     ];
   }).config.system.build.amazonImage;
   tests = import ./tests { inherit pkgs supportedSystems; };
+  other = import ./other {};
 }
