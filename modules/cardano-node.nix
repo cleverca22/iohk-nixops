@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, options, ... }:
 
 with (import ./../lib.nix);
 
@@ -14,8 +14,6 @@ let
     if (smartGenIP != "")
     then "--peer ${smartGenIP}:24962/${genDhtKey 100 }}"
     else "";
-  publicIP = config.networking.publicIPv4 or null;
-  privateIP = config.networking.privateIPv4 or null;
 
   # Given a list of dht/ip mappings, generate peers line
   #
@@ -25,8 +23,8 @@ let
 
   command = toString [
     cfg.executable
-    "--listen ${if privateIP == null then "0.0.0.0" else privateIP}:${toString cfg.port}"
-    (optionalString (publicIP != null) "--pubhost ${publicIP}")
+    "--listen ${cfg.privateIP}:${toString cfg.port}"
+    (optionalString (cfg.publicIP != null) "--pubhost ${cfg.publicIP}")
     # Profiling
     # NB. can trigger https://ghc.haskell.org/trac/ghc/ticket/7836
     # (it actually happened)
@@ -108,6 +106,18 @@ in {
       };
 
       testIndex = mkOption { type = types.int; };
+
+      publicIP = mkOption {
+        type = types.nullOr types.str;
+        description = "Public IP to advertise to peers";
+        default = null;
+      };
+
+      privateIP = mkOption {
+        type = types.str;
+        description = "Private IP to bind to";
+        default = "0.0.0.0";
+      };
     };
   };
 
