@@ -2,7 +2,7 @@ import ./make-test.nix ({ pkgs, ... }: {
   name = "boot";
   nodes = {
     machine = { config, pkgs, ... }: {
-      imports = [ ../modules/cardano-node.nix ];
+      imports = [ ../../modules/cardano-node.nix ];
       services.cardano-node = {
         enable = true;
         testIndex = 0;

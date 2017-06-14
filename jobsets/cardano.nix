@@ -1,4 +1,4 @@
-{ pkgs ? (import <nixpkgs> {})}:
+{ pkgs ? (import <nixpkgs> {}), supportedSystems ? [ "x86_64-linux" ] }:
 
 with pkgs;
 
@@ -15,4 +15,5 @@ in rec {
       ({ services.cardano-node.initialPeers = [];})
     ];
   }).config.system.build.amazonImage;
+  tests = import ./tests { inherit pkgs supportedSystems; };
 }
