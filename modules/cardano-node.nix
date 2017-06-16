@@ -12,25 +12,27 @@ let
   smartGenIP = builtins.getEnv "SMART_GEN_IP";
   smartGenPeer =
     if (smartGenIP != "")
-    then "--peer ${smartGenIP}:24962/${genDhtKey 100 }}"
+    then "--kademlia-peer ${smartGenIP}:24962"
     else "";
 
   # Given a list of dht/ip mappings, generate peers line
   #
   # > genPeers ["ip:port/dht" "ip:port/dht" ...]
-  # "--peer ip:port/dht --peer ip:port/dht ..."
-  genPeers = peers: toString (map (p: "--peer " + p) peers);
+  # "--kademlia-peer ip:port/dht --peer ip:port/dht ..."
+  genPeers = peers: toString (map (p: "--kademlia-peer " + p) peers);
 
   command = toString [
     cfg.executable
+    "--address ${if cfg.publicIP == null then "0.0.0.0" else cfg.publicIP}:${toString cfg.port}"
     "--listen ${cfg.privateIP}:${toString cfg.port}"
-    (optionalString (cfg.publicIP != null) "--pubhost ${cfg.publicIP}")
+    "--kademlia-address ${cfg.privateIP}:${toString cfg.port}"
     # Profiling
     # NB. can trigger https://ghc.haskell.org/trac/ghc/ticket/7836
     # (it actually happened)
     #"+RTS -N -pa -hb -T -A6G -qg -RTS"
     # Event logging (cannot be used with profiling)
     #"+RTS -N -T -l -A6G -qg -RTS"
+    "--no-ntp" # DEVOPS-160
     (optionalString cfg.stats "--stats")
     (optionalString (!cfg.productionMode) "--rebuild-db")
     (optionalString (!cfg.productionMode) "--spending-genesis ${toString cfg.testIndex}")
@@ -42,13 +44,13 @@ let
        then "--bitcoin-distr \"${distributionParam}\""
        else "--flat-distr \"${distributionParam}\""))
     (optionalString cfg.jsonLog "--json-log ${stateDir}/jsonLog.json")
-    "--dht-key ${cfg.dhtKey}"
+    "--kademlia-id ${cfg.dhtKey}"
     (optionalString cfg.productionMode "--keyfile ${stateDir}key${toString (cfg.testIndex + 1)}.sk")
     (optionalString (cfg.productionMode && cfg.systemStart != 0) "--system-start ${toString cfg.systemStart}")
     (optionalString cfg.supporter "--supporter")
     "--log-config ${./../static/csl-logging.yaml}"
     "--logs-prefix /var/lib/cardano-node"
-    (optionalString (!cfg.enableP2P) "--explicit-initial --disable-propagation ${smartGenPeer}")
+    (optionalString (!cfg.enableP2P) "--kademlia-explicit-initial --disable-propagation ${smartGenPeer}")
     (genPeers cfg.initialPeers)
   ];
 in {
@@ -61,7 +63,7 @@ in {
       enableP2P = mkOption { type = types.bool; default = false; };
       supporter = mkOption { type = types.bool; default = false; };
       dhtKey = mkOption {
-        type = types.string;
+        type = types.str;
         description = "base64-url string describing dht key";
       };
       productionMode = mkOption {
@@ -103,6 +105,11 @@ in {
         type = types.bool;
         default = false;
         description = "Enable rich-poor distr";
+      };
+      hasExplorer = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Does the node has explorer running?";
       };
 
       testIndex = mkOption { type = types.int; };

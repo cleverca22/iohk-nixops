@@ -21,10 +21,11 @@ testIndex: region:
         privateIP = if options.networking.privateIPv4.isDefined then config.networking.privateIPv4 else "0.0.0.0";
       };
 
-      deployment.ec2.ami = (import ./amis.nix).${config.deployment.ec2.region};
+      # TODO: DEVOPS-8
+      #deployment.ec2.ami = (import ./amis.nix).${config.deployment.ec2.region};
       deployment.ec2.region = region;
       deployment.ec2.keyPair = resources.ec2KeyPairs.${keypairFor region};
-      deployment.keys = optionalAttrs cfg.productionMode {
+      deployment.keys = optionalAttrs (cfg.productionMode && !cfg.hasExplorer) {
         "key${toString (testIndex + 1)}" = {
           keyFile = ./. + "/../keys/key${toString (testIndex + 1)}.sk";
           user = "cardano-node";
