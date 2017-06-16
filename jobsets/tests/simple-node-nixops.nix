@@ -9,6 +9,7 @@ import ./make-test.nix ({ pkgs, ... }: {
         initialPeers = [];
         genesisN = 6;
         autoStart = true;
+        productionMode = true;
       };
     };
   };
