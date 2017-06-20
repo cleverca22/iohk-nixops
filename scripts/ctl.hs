@@ -1,6 +1,5 @@
 #!/usr/bin/env nix-shell
 #! nix-shell -j 4 -i runhaskell -p 'pkgs.haskellPackages.ghcWithPackages (hp: with hp; [ turtle safe base-unicode-symbols ])'
-#! nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/ed070354a9e307fdf20a94cb2af749738562385d.tar.gz
 
 {-# LANGUAGE GADTs, OverloadedStrings, RecordWildCards #-}
 {-# OPTIONS_GHC -Wall -Wno-name-shadowing -Wno-missing-signatures #-}
