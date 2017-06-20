@@ -11,7 +11,6 @@
     "keepnr": 3,
     "inputs": {
          "src": { "type": "git", "value": "https://github.com/cleverca22/iohk-nixops devops-171", "emailresponsible": false },
-         "nixpkgs": { "type": "git", "value": "https://github.com/NixOS/nixpkgs-channels.git nixos-16.09", "emailresponsible": false },
-         "prsJSON": { "type": "githubpulls", "value": "input-output-hk iohk-nixops", "emailresponsible": false }
+         "nixpkgs": { "type": "git", "value": "https://github.com/NixOS/nixpkgs-channels.git nixos-16.09", "emailresponsible": false }
      }
 }

@@ -1,4 +1,4 @@
-{ prsJSON, nixpkgs ? <nixpkgs>, declInput ? {} }:
+{ prsJSON ? null, nixpkgs ? <nixpkgs>, declInput ? {} }:
 
 # Followed by https://github.com/NixOS/hydra/pull/418/files
 
@@ -48,7 +48,6 @@ in {
     cat <<EOF
     ${builtins.toJSON declInput}
     EOF
-    cat ${prsJSON}
     cp ${jobsetJson} $out
   '';
 }
