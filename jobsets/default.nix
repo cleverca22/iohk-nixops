@@ -37,6 +37,7 @@ let
     cardano-sl = mkCardano "master" "b9628313300b7c9e4cc88b91b7c98dfe3cfd9fc4";
     cardano-sl-staging = mkCardano "staging" nixpkgs-src.rev;
     cardano-devops-123 = mkCardano "devops-123-unification-nixpkgs" nixpkgs-src.rev;
+    cardano-devops-169 = mkCardano "devops-169-initial-nixos-tests" nixpkgs-src.rev;
     deployments = {
       nixexprpath = "jobsets/deployments.nix";
       description = "Builds for deployments";
