@@ -1,8 +1,9 @@
-{ nixpkgs ? <nixpkgs>, declInput ? {} }:
+{ prsJSON, nixpkgs ? <nixpkgs>, declInput ? {} }:
 
 # Followed by https://github.com/NixOS/hydra/pull/418/files
 
 let
+  prs = builtins.fromJSON (builtins.readFile prsJSON);
   iohkNixopsUri = "https://github.com/input-output-hk/iohk-nixops.git";
   pkgs = import nixpkgs {};
   mkFetchGithub = value: {
@@ -47,6 +48,7 @@ in {
     cat <<EOF
     ${builtins.toJSON declInput}
     EOF
+    cat ${prsJSON}
     cp ${jobsetJson} $out
   '';
 }
