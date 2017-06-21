@@ -33,7 +33,16 @@ let
       jobsets = mkFetchGithub "${iohkNixopsUri} ${nixopsBranch}";
     };
   };
-  jobsetsAttrs = with pkgs.lib; mapAttrs (name: settings: defaultSettings // settings) (rec {
+  mkPR = num: info: defaultSettings // {
+    description = "PR ${num}: ${info.title}";
+    nixexprpath = "jobsets/cardano.nix";
+    inputs = {
+      nixpkgs = mkFetchGithub "https://github.com/NixOS/nixpkgs.git ${nixpkgs-src.rev}";
+      jobsets = mkFetchGithub "https://github.com/${info.head.repo.owner.login}/${info.head.repo.name}.git ${info.head.ref}";
+    };
+  };
+  prJobsets = pkgs.lib.mapAttrs mkPR prs;
+  mainJobsets = with pkgs.lib; mapAttrs (name: settings: defaultSettings // settings) (rec {
     cardano-sl = mkCardano "master" "b9628313300b7c9e4cc88b91b7c98dfe3cfd9fc4";
     cardano-sl-staging = mkCardano "staging" nixpkgs-src.rev;
     cardano-devops-123 = mkCardano "devops-123-unification-nixpkgs" nixpkgs-src.rev;
@@ -43,6 +52,7 @@ let
       description = "Builds for deployments";
     };
   });
+  jobsetsAttrs = prJobsets // mainJobsets;
   jobsetJson = pkgs.writeText "spec.json" (builtins.toJSON jobsetsAttrs);
 in {
   jobsets = with pkgs.lib; pkgs.runCommand "spec.json" {} ''
