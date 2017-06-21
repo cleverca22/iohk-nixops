@@ -46,6 +46,7 @@ let
   jobsetJson = pkgs.writeText "spec.json" (builtins.toJSON jobsetsAttrs);
 in {
   jobsets = with pkgs.lib; pkgs.runCommand "spec.json" {} ''
+    cat ${prsJSON}
     cat <<EOF
     ${builtins.toJSON declInput}
     EOF
